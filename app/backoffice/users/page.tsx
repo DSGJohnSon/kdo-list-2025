@@ -8,6 +8,7 @@ export default function UsersPage() {
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [newUserName, setNewUserName] = useState('');
+  const [viewOnly, setViewOnly] = useState(false);
   const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
@@ -49,6 +50,7 @@ export default function UsersPage() {
         .insert({
           name: newUserName.trim(),
           hex_key: hexKey,
+          view_only: viewOnly,
         })
         .select()
         .single();
@@ -57,6 +59,7 @@ export default function UsersPage() {
 
       setUsers([data, ...users]);
       setNewUserName('');
+      setViewOnly(false);
       setShowForm(false);
     } catch (error) {
       console.error('Error creating user:', error);
@@ -128,6 +131,24 @@ export default function UsersPage() {
                 placeholder="Entrez le nom (ex: Maman, Papa, Soeur)"
               />
             </div>
+            <div className="flex items-center gap-3 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+              <input
+                type="checkbox"
+                id="viewOnly"
+                checked={viewOnly}
+                onChange={(e) => setViewOnly(e.target.checked)}
+                className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              />
+              <label
+                htmlFor="viewOnly"
+                className="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer"
+              >
+                <div className="font-semibold">Mode lecture seule</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">
+                  Cet utilisateur pourra voir la liste mais pas les réservations des autres
+                </div>
+              </label>
+            </div>
             <button
               type="submit"
               disabled={creating}
@@ -168,6 +189,13 @@ export default function UsersPage() {
                     {user.name}
                   </h3>
                   <div className="space-y-2">
+                    {user.view_only && (
+                      <div className="mb-3 px-3 py-2 bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 rounded-lg">
+                        <p className="text-sm font-semibold text-blue-800 dark:text-blue-300">
+                          👁️ Mode lecture seule
+                        </p>
+                      </div>
+                    )}
                     <div>
                       <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
                         Clé hexadécimale :

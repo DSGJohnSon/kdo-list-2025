@@ -22,6 +22,7 @@ export type User = {
   id: string;
   name: string;
   hex_key: string;
+  view_only: boolean;
   created_at: string;
 };
 

@@ -234,6 +234,11 @@ export default function GiftsListPage() {
             </div>
             <p className="text-gray-600 dark:text-gray-400">
               Bienvenue, <span className="font-semibold">{user.name}</span> !
+              {user.view_only && (
+                <span className="ml-2 px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-sm font-semibold rounded-full">
+                  👁️ Mode lecture seule
+                </span>
+              )}
             </p>
           </div>
         </div>
@@ -345,21 +350,21 @@ export default function GiftsListPage() {
               <div
                 key={gift.id}
                 className={`bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden border-4 transition-all relative ${
-                  gift.current_user_interested
+                  !user.view_only && gift.current_user_interested
                     ? 'border-green-500 shadow-green-200 shadow-2xl'
-                    : gift.interested_users && gift.interested_users.length > 0
+                    : !user.view_only && gift.interested_users && gift.interested_users.length > 0
                     ? 'border-orange-500 shadow-orange-200 shadow-2xl'
                     : 'border-gray-200 dark:border-gray-700 hover:shadow-xl'
                 }`}
               >
-                {/* Status Badge - Very Visible */}
-                {gift.current_user_interested && (
+                {/* Status Badge - Very Visible (only for non-view-only users) */}
+                {!user.view_only && gift.current_user_interested && (
                   <div className="absolute top-0 left-0 right-0 bg-green-600 text-white py-3 px-4 z-10 flex items-center justify-center gap-2 font-bold text-lg">
                     <CheckCircle className="h-6 w-6" />
                     VOUS AVEZ RÉSERVÉ CE CADEAU
                   </div>
                 )}
-                {!gift.current_user_interested && gift.interested_users && gift.interested_users.length > 0 && (
+                {!user.view_only && !gift.current_user_interested && gift.interested_users && gift.interested_users.length > 0 && (
                   <div className="absolute top-0 left-0 right-0 bg-orange-600 text-white py-3 px-4 z-10 flex items-center justify-center gap-2 font-bold text-lg">
                     <AlertCircle className="h-6 w-6" />
                     DÉJÀ RÉSERVÉ PAR {gift.interested_users.map((u) => u.user_name.toUpperCase()).join(', ')}
@@ -367,7 +372,7 @@ export default function GiftsListPage() {
                 )}
                 {gift.image_url && (
                   <div className={`h-64 bg-gray-100 dark:bg-gray-700 flex items-center justify-center p-4 ${
-                    gift.current_user_interested || (gift.interested_users && gift.interested_users.length > 0)
+                    !user.view_only && (gift.current_user_interested || (gift.interested_users && gift.interested_users.length > 0))
                       ? 'mt-16'
                       : ''
                   }`}>
@@ -379,7 +384,7 @@ export default function GiftsListPage() {
                   </div>
                 )}
                 <div className={`p-5 ${
-                  !gift.image_url && (gift.current_user_interested || (gift.interested_users && gift.interested_users.length > 0))
+                  !user.view_only && !gift.image_url && (gift.current_user_interested || (gift.interested_users && gift.interested_users.length > 0))
                     ? 'mt-16'
                     : ''
                 }`}>
@@ -408,8 +413,8 @@ export default function GiftsListPage() {
                     )}
                   </div>
 
-                  {/* Additional Info Box */}
-                  {gift.interested_users && gift.interested_users.length > 0 && (
+                  {/* Additional Info Box (only for non-view-only users) */}
+                  {!user.view_only && gift.interested_users && gift.interested_users.length > 0 && (
                     <div className={`mb-4 p-4 rounded-lg border-2 ${
                       gift.current_user_interested
                         ? 'bg-green-100 dark:bg-green-900/30 border-green-500'
@@ -444,31 +449,35 @@ export default function GiftsListPage() {
                       href={gift.purchase_link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors"
+                      className={`flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors ${
+                        user.view_only ? 'flex-1' : 'flex-1'
+                      }`}
                     >
                       <ShoppingCart className="h-4 w-4" />
                       Voir le produit
                     </a>
-                    <button
-                      onClick={() => toggleInterest(gift.id)}
-                      className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-base font-bold rounded-lg transition-colors ${
-                        gift.current_user_interested
-                          ? 'bg-red-600 hover:bg-red-700 text-white'
-                          : 'bg-green-600 hover:bg-green-700 text-white'
-                      }`}
-                    >
-                      {gift.current_user_interested ? (
-                        <>
-                          <X className="h-5 w-5" />
-                          Annuler ma réservation
-                        </>
-                      ) : (
-                        <>
-                          <Heart className="h-5 w-5" />
-                          Réserver ce cadeau
-                        </>
-                      )}
-                    </button>
+                    {!user.view_only && (
+                      <button
+                        onClick={() => toggleInterest(gift.id)}
+                        className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-base font-bold rounded-lg transition-colors ${
+                          gift.current_user_interested
+                            ? 'bg-red-600 hover:bg-red-700 text-white'
+                            : 'bg-green-600 hover:bg-green-700 text-white'
+                        }`}
+                      >
+                        {gift.current_user_interested ? (
+                          <>
+                            <X className="h-5 w-5" />
+                            Annuler ma réservation
+                          </>
+                        ) : (
+                          <>
+                            <Heart className="h-5 w-5" />
+                            Réserver ce cadeau
+                          </>
+                        )}
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
