@@ -32,3 +32,23 @@ export type Interest = {
   user_id: string;
   created_at: string;
 };
+
+export type Person = {
+  id: string;
+  name: string;
+  budget: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type PersonGift = {
+  id: string;
+  person_id: string;
+  name: string;
+  amount: number;
+  status: 'Idée' | 'Commandé' | 'Livré';
+  image_url?: string;
+  note?: string;
+  created_at: string;
+  updated_at: string;
+};

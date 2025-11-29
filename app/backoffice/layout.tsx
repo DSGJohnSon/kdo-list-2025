@@ -26,6 +26,7 @@ export default function BackofficeLayout({
     { href: '/backoffice', label: 'Tableau de bord', icon: '📊' },
     { href: '/backoffice/gifts', label: 'Cadeaux', icon: '🎁' },
     { href: '/backoffice/users', label: 'Utilisateurs', icon: '👥' },
+    { href: '/backoffice/persons', label: 'Personnes', icon: '👤' },
   ];
 
   return (
